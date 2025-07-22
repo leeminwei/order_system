@@ -101,7 +101,7 @@
             resultDiv.innerHTML = `Hello ${name},<br>You ordered: ${orderSummary}<br>Total: $${total}`;
 
             // 傳送到後端 socket server
-            const socket = new WebSocket("ws://localhost:8888");
+            const socket = new WebSocket("ws://192.168.3.4:8888:8888");
             socket.onopen = function () {
                 const orderData = {
                     name: name,
