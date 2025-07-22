@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Ordering System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+        }
+        .menu-item {
+            margin: 10px 0;
+        }
+        .total {
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: center;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Our Restaurant</h1>
+        <label for="username">Enter your name:</label>
+        <input type="text" id="username" placeholder="e.g., Danny">
+
+        <h2>Menu</h2>
+        <form id="orderForm">
+            <div class="menu-item">
+                <input type="checkbox" name="item" value="1,漢堡,120" data-price="120"> 1號餐：漢堡 - $120
+            </div>
+            <div class="menu-item">
+                <input type="checkbox" name="item" value="2,炸雞,150" data-price="150"> 2號餐：炸雞 - $150
+            </div>
+            <div class="menu-item">
+                <input type="checkbox" name="item" value="3,義大利麵,130" data-price="130"> 3號餐：義大利麵 - $130
+            </div>
+            <div class="menu-item">
+                <input type="checkbox" name="item" value="4,奶茶,50" data-price="50"> 4號餐：奶茶 - $50
+            </div>
+            <div class="menu-item">
+                <input type="checkbox" name="item" value="5,薯條,60" data-price="60"> 5號餐：薯條 - $60
+            </div>
+            <button type="button" onclick="submitOrder()">Submit Order</button>
+        </form>
+
+        <div class="total" id="result"></div>
+    </div>
+
+    <script>
+        function submitOrder() {
+            const name = document.getElementById("username").value.trim();
+            const checkboxes = document.querySelectorAll("input[name='item']:checked");
+            let total = 0;
+            let orders = [];
+
+            checkboxes.forEach(cb => {
+                const [num, meal, price] = cb.value.split(',');
+                total += parseInt(price);
+                orders.push({ num, meal, price });
+            });
+
+            const resultDiv = document.getElementById("result");
+            if (!name) {
+                resultDiv.innerHTML = "<span style='color:red;'>Please enter your name.</span>";
+                return;
+            } else if (orders.length === 0) {
+                resultDiv.innerHTML = `Hello ${name}, you haven't selected any items.`;
+                return;
+            }
+
+            let orderSummary = orders.map(o => `${o.num}號餐：${o.meal} ($${o.price})`).join(", ");
+            resultDiv.innerHTML = `Hello ${name},<br>You ordered: ${orderSummary}<br>Total: $${total}`;
+
+            // 傳送到後端 socket server
+            const socket = new WebSocket("ws://localhost:8888");
+            socket.onopen = function () {
+                const orderData = {
+                    name: name,
+                    meals: orders.map(o => parseInt(o.num)),
+                    total: total
+                };
+                socket.send(JSON.stringify(orderData));
+                socket.close();
+            };
+            socket.onerror = function (err) {
+                console.error("WebSocket error:", err);
+            };
+        }
+    </script>
+</body>
+</html>
