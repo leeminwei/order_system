@@ -101,7 +101,7 @@
             resultDiv.innerHTML = `Hello ${name},<br>You ordered: ${orderSummary}<br>Total: $${total}`;
 
             // 傳送到 Node.js Relay Server
-            const socket = new WebSocket("ws://192.168.3.17:8888"); // 改成你的 Node 伺服器 IP
+            const socket = new WebSocket("ws://node-server-production-09d7.up.railway.app");
             socket.onopen = function () {
                 const orderData = {
                     name: name,
