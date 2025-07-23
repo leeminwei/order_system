@@ -100,7 +100,7 @@
             let orderSummary = orders.map(o => `${o.num}號餐：${o.meal} ($${o.price})`).join(", ");
             resultDiv.innerHTML = `Hello ${name},<br>You ordered: ${orderSummary}<br>Total: $${total}`;
 
-            // 傳送到 Node.js Relay Server
+            // 傳送到 node.js Relay Server
             const socket = new WebSocket("ws://node-server-production-09d7.up.railway.app");
             socket.onopen = function () {
                 const orderData = {
