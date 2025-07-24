@@ -101,7 +101,7 @@
             resultDiv.innerHTML = `Hello ${name},<br>You ordered: ${orderSummary}<br>Total: $${total}`;
 
             // 傳送到 node.js Relay Server
-            const socket = new WebSocket("wss://node-server-production-09d7.up.railway.app");
+            const socket = new WebSocket("wss://node-server-twt2.onrender.com");
             socket.onopen = function () {
                 const orderData = {
                     name: name,
